@@ -281,7 +281,7 @@ public class ElasticResultRowAsyncIterator implements Iterator<FulltextResultRow
             for (Filter.PropertyRestriction pr : indexPlan.getFilter().getPropertyRestrictions()) {
                 if (QueryConstants.REP_EXCERPT.equals(pr.propertyName)) {
                     String value = pr.first.getValue(Type.STRING);
-                    excerpts.put(value, null);
+                    excerpts.put(value, new HighlightField.Builder().build());
                 }
             }
             if(excerpts.isEmpty()) {

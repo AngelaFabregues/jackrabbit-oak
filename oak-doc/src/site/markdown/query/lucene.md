@@ -68,14 +68,12 @@
         * [UC4 - Find all assets which are created by David and refer to december](#uc4)
         * [UC5 - Facets](#uc5)
 
-Oak supports Lucene based indexes to support both property constraint and full
-text constraints. Depending on the configuration a Lucene index can be used
-to evaluate property constraints, full text constraints, path restrictions
-and sorting.
+Oak uses Lucene based indices to support property and full-text constraints. Depending on its configuration, and index can be used
+to find JCR nodes by a given property value, by path, by similar values (full-text search), and can also be used to sort nodes.
 
     SELECT * FROM [nt:base] WHERE [assetType] = 'image'
 
-Following index definition would allow using Lucene index for above query
+The following index definition enables the use of a Lucene index for the above query:
 
 ```
 /oak:index/assetType
@@ -104,7 +102,7 @@ _Note that compared to [Property Index](query.html#property-index) Lucene
 Property Index is always configured in Async mode hence it might lag behind
 in reflecting the current repository state while performing the query_
 
-Taking another example. To support following query
+Taking another example. To support following query:
 
     //*[jcr:contains(., 'text')]
 
@@ -134,11 +132,10 @@ Following are the new features in 1.6 release
 
 ### <a name="index-definition"></a> Index Definition
 
-Lucene index definition consist of `indexingRules`, `analyzers` ,
-`aggregates` etc which determine which node and properties are to be indexed
-and how they are indexed.
+A Lucene index definition consist of `indexingRules`, `analyzers` ,
+`aggregates`, ... which determine what nodes and properties to index, and how to index them.
 
-Below is the canonical index definition structure
+You can find bellow the canonical definition structure of an index:
 
     luceneIndex (oak:QueryIndexDefinition)
       - type (string) = 'lucene' mandatory
@@ -163,8 +160,7 @@ Below is the canonical index definition structure
       + analyzers (nt:unstructured)
       + tika (nt:unstructured)
 
-Following are the config options which can be defined at the index definition
-level
+At index definition level, the following config options are defined:
 
 type
 : Required and should always be `lucene`.
@@ -178,15 +174,15 @@ codec
 
 compatVersion
 : Required integer property and should be set to 2
-: By default Oak uses older Lucene index implementation which does not
-  supports property restrictions, index time aggregation etc.
-  To make use of this feature set it to 2.
-  Please note for full text indexing with compatVersion 2,
+: By default Oak uses an old Lucene index implementation which does not
+  support property restrictions and index time aggregation among other features.
+  To enable those features set the compatVersion to 2.
+  Please note that for full text indexing with compatVersion 2,
   at query time, only the access right of the parent (aggregate) node is checked,
   and the access right of the child nodes is not checked.
   If this is a security concern, then compatVersion should not be set,
   so that query time aggregation is used, in which case the access right
-  of the relevant child is also checked.
+  of the relevant children is also checked.
   A compatVersion 2 full text index is usually faster to run queries.
 
 evaluatePathRestrictions
@@ -294,9 +290,9 @@ nodeTypes.
               - propertyIndex = true
               - name = "jcr:content/metadata/imageType"
 
-Rules are defined per nodeType and each rule has one or more property
-definitions determine which properties are indexed. Below is the canonical index
-definition structure
+Rules are defined per nodeType. Each rule has one or more property
+definitions to determine which properties to index. Find below the canonical index
+definition structure:
 
     ruleName (nt:unstructured)
       - inherited (boolean) = true
@@ -308,22 +304,22 @@ Following are the config options which can be defined at the index rule
 level
 
 inherited
-: Optional boolean property defaults to true
-: Determines if the rule is applicable on exact match or can be applied if
+: Optional boolean property. Defaults to true
+: Determines if the rule is applicable on exact match or if it can be applied when the
   match is done on basis of nodeType inheritance
 
 includePropertyTypes
-: Applicable when index is enabled for fulltext indexing
-: For full text index defaults to include all types
-: String array of property types which should be indexed. The values can be one
+: Applicable when index is enabled for full-text indexing
+: For full text index, it defaults to include all types
+: String array of property types which should be indexed. The values can be
   specified in [PropertyType Names][1]
 
 <a name="index-node-name"></a>
 indexNodeName
 : `@since Oak 1.0.20, 1.2.5`
-: Default to false. If set to true then index would also be created for node name.
-  This would enable faster evaluation of queries involving constraints on Node
-  name. For example
+: Defaults to false. If set to true, then the index is also created for the node name.
+  This enables a faster evaluation of queries involving constraints on the node
+  name. Some examples are:
     * _select [jcr:path] from [nt:base] where NAME() = 'kite'_
     * _select [jcr:path] from [nt:base] where NAME() LIKE 'kite%'_
     * //kite
@@ -363,8 +359,8 @@ applicable if exact match is found
 
 ##### <a name="property-definitions"></a>Property Definitions
 
-Each index rule consist of one ore more property definition defined under
-`properties`. Order of property definition node is important as some properties
+Each index rule consists of one or more property definitions defined under
+`properties`. The order of the property definition nodes is important as some properties
 are based on regular expressions. Below is the canonical property definition
 structure
 
@@ -424,7 +420,7 @@ useInExcerpt
   The value of the property is still full-text indexed when set to false, but it
   will never show up in an excerpt for its parent node. If set to true then
   property value would be stored separately within index causing the index
-  size to increase. So set it to true only if you make use of excerpt feature
+  size to increase. So, set it to true only if you make use of excerpt feature
 
 nodeScopeIndex
 : Control whether the value of a property should be part of fulltext index. That
@@ -606,7 +602,7 @@ e.g. transient system data.
 If the application stores logs under `/var/log`, and this data is
 not supposed to be indexed, then it can be excluded, by setting
 `excludedPaths` to `["/var/log"]`.
-However it is typically better to set `includedPaths` and `queryPaths`.
+However, it is typically better to set `includedPaths` and `queryPaths`.
 
 <a name="query-paths"></a>
 **queryPaths**

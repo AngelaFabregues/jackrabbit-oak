@@ -172,11 +172,11 @@ import static org.apache.lucene.search.BooleanClause.Occur.*;
  * <li>must have the <code>async</code> property set to <b><code>async</code></b></li>
  * </ul>
  * <p>
- * Optionally you can add
+ * Optionally, you can add
  * <ul>
  * <li>what subset of property types to be included in the index via the <code>includePropertyTypes</code> property</li>
  * <li>a blacklist of property names: what property to be excluded from the index via the <code>excludePropertyNames</code> property</li>
- * <li>the <code>reindex</code> flag which when set to <code>true</code>, triggers a full content re-index.</li>
+ * <li>the <code>reindex</code> flag which, when set to <code>true</code>, triggers a full content re-index.</li>
  * </ul>
  * <pre>{@code
  * {
@@ -389,6 +389,7 @@ public class LucenePropertyIndex extends FulltextIndex {
                                 PERF_LOGGER.end(f, -1, "facets retrieved");
                             }
 
+                            // creates excerptFields with the set of first values of property restrictions with name rep:excerpt.
                             Set<String> excerptFields = Sets.newHashSet();
                             for (PropertyRestriction pr : filter.getPropertyRestrictions()) {
                                 if (QueryConstants.REP_EXCERPT.equals(pr.propertyName)) {
@@ -453,6 +454,7 @@ public class LucenePropertyIndex extends FulltextIndex {
                                     explanation = searcher.explain(query, doc.doc).toString();
                                 }
 
+                                // Request and from now on reading the response.
                                 FulltextResultRow row = convertToRow(doc, searcher, excerpts, facetProvider, explanation);
                                 if (row != null) {
                                     queue.add(row);
