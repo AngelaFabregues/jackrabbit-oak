@@ -145,6 +145,14 @@ public abstract class ExcerptTest extends AbstractQueryTest {
             assertFalse(col + " didn't evaluate correctly - got '" + excerpt + "'",
                     excerpt.contains("i<strong>fox</foxing>ing"));
         }
+
+        // TODO improve the test with
+        /*Map<String, String> expectedExcerpts = new HashMap<String, String>(4);
+        expectedExcerpts.put("rep:excerpt", "is <strong>fox</strong> ifoxing...ifoxing <strong>fox</strong>");
+        expectedExcerpts.put("rep:excerpt(.)", "is <strong>fox</strong> ifoxing...ifoxing <strong>fox</strong>");
+        expectedExcerpts.put("rep:excerpt(foo)", "is <strong>fox</strong> ifoxing");
+        expectedExcerpts.put("rep:excerpt(bar)", "ifoxing <strong>fox</strong>");
+        validateExcerpts(query, expectedExcerpts);*/
     }
 
     @Test

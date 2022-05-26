@@ -3,27 +3,20 @@ package org.apache.jackrabbit.oak.plugins.index;
 import com.google.common.base.Joiner;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.oak.api.PropertyValue;
-import org.apache.jackrabbit.oak.api.Result;
-import org.apache.jackrabbit.oak.api.ResultRow;
 import org.apache.jackrabbit.oak.plugins.index.search.FulltextIndexConstants;
 import org.apache.jackrabbit.oak.plugins.index.search.IndexFormatVersion;
 import org.apache.jackrabbit.oak.query.AbstractJcrTest;
 import org.junit.Test;
 
 import javax.jcr.Node;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.RowIterator;
+import javax.jcr.query.*;
 
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static org.apache.jackrabbit.oak.api.QueryEngine.NO_BINDINGS;
-import static org.apache.jackrabbit.oak.api.Type.STRING;
 import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.*;
 import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.REINDEX_PROPERTY_NAME;
 import static org.junit.Assert.*;
@@ -76,21 +69,24 @@ public abstract class ExcerptTest2 extends AbstractJcrTest {
         allProps.setProperty(FulltextIndexConstants.PROP_NAME, FulltextIndexConstants.REGEX_ALL_PROPS);
         allProps.setProperty(FulltextIndexConstants.PROP_IS_REGEX, true);
     }
-    private Set<String> getExcerpts(String query) throws Exception {
+    private Map<String,String> getExcerpts(String query) throws Exception {
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         QueryResult result = queryManager.createQuery(query, Query.JCR_SQL2).execute();
-        RowIterator rows = result.getRows();
 
-        Set<String> excerpts = newHashSet();
-        while (rows.hasNext()) {
-            excerpts.add(rows.nextRow().getValue("excerpts").getString());
+        Map<String,String> excerpts = new HashMap<String,String>();
+        RowIterator it = result.getRows();
+        if(it.hasNext()){
+            Row row = it.nextRow();
+            for(String column: result.getColumnNames()){
+                excerpts.put(column, row.getValue(column).getString());
+            }
         }
         return excerpts;
     }
 
-    protected void validateExcerpts(String query, Set<String> expected) {
+    protected void validateExcerpts(String query, Map<String,String> expected) {
         assertEventually(() -> {
-            Set<String> excerpts;
+            Map<String,String> excerpts;
             try {
                 excerpts = getExcerpts(query);
             } catch (Exception e) {
@@ -106,13 +102,19 @@ public abstract class ExcerptTest2 extends AbstractJcrTest {
         contentRoot.setProperty("foo", "is fox ifoxing");
         contentRoot.setProperty("bar", "ifoxing fox");
         contentRoot.setProperty("baz", "fox ifoxing");
+        adminSession.save();
 
         Set<String> columns = newHashSet("rep:excerpt", "rep:excerpt(.)", "rep:excerpt(foo)", "rep:excerpt(bar)");
         String selectColumns = Joiner.on(",").join(
                 columns.stream().map(col -> "[" + col + "]").collect(Collectors.toSet())
         );
         String query = "SELECT " + selectColumns + " FROM [nt:base] WHERE CONTAINS(*, 'fox')";
-        validateExcerpts(query, columns);
+        Map<String, String> expectedExcerpts = new HashMap<String, String>(4);
+        expectedExcerpts.put("rep:excerpt", "is <strong>fox</strong> ifoxing...ifoxing <strong>fox</strong>");
+        expectedExcerpts.put("rep:excerpt(.)", "is <strong>fox</strong> ifoxing...ifoxing <strong>fox</strong>");
+        expectedExcerpts.put("rep:excerpt(foo)", "is <strong>fox</strong> ifoxing");
+        expectedExcerpts.put("rep:excerpt(bar)", "ifoxing <strong>fox</strong>");
+        validateExcerpts(query, expectedExcerpts);
     }
 
     private static void assertEventually(Runnable r) {
