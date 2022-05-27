@@ -19,12 +19,11 @@ package org.apache.jackrabbit.oak.plugins.index.elastic;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.jcr.Jcr;
 import org.apache.jackrabbit.oak.plugins.index.ExcerptTest2;
-import org.apache.jackrabbit.oak.plugins.index.IndexDescendantSpellcheckCommonTest;
 import org.junit.ClassRule;
 
 import javax.jcr.Repository;
 
-public class ElasticExcerptTest extends ExcerptTest2 {
+public class ElasticExcerptTest2 extends ExcerptTest2 {
 
     @ClassRule
     public static final ElasticConnectionRule elasticRule =

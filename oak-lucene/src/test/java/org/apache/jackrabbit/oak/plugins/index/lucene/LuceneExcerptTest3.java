@@ -23,7 +23,7 @@ import org.apache.jackrabbit.oak.InitialContentHelper;
 import org.apache.jackrabbit.oak.api.ContentRepository;
 import org.apache.jackrabbit.oak.api.Tree;
 import org.apache.jackrabbit.oak.api.Type;
-import org.apache.jackrabbit.oak.plugins.index.FunctionIndexCommonTest;
+import org.apache.jackrabbit.oak.plugins.index.ExcerptTest3;
 import org.apache.jackrabbit.oak.plugins.index.LuceneIndexOptions;
 import org.apache.jackrabbit.oak.plugins.index.search.FulltextIndexConstants;
 import org.apache.jackrabbit.oak.plugins.memory.MemoryNodeStore;
@@ -37,13 +37,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.INDEX_DEFINITIONS_NAME;
-import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.INDEX_DEFINITIONS_NODE_TYPE;
-import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.REINDEX_PROPERTY_NAME;
-import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.TYPE_PROPERTY_NAME;
+import static org.apache.jackrabbit.oak.plugins.index.IndexConstants.*;
 
-public class LuceneFunctionIndexCommonTest extends FunctionIndexCommonTest {
-
+public class LuceneExcerptTest3 extends ExcerptTest3 {
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder(new File("target"));
@@ -53,6 +49,7 @@ public class LuceneFunctionIndexCommonTest extends FunctionIndexCommonTest {
         return createIndex(index, name, propNames);
     }
 
+    //TODO adapt index creation to the code in LuceneExcerptTest or ExcerptTest
     protected Tree createIndex(Tree index, String name, Set<String> propNames) {
         Tree def = index.addChild(INDEX_DEFINITIONS_NAME).addChild(name);
         def.setProperty(JcrConstants.JCR_PRIMARYTYPE,
