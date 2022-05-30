@@ -48,6 +48,7 @@ public class LuceneFunctionIndexCommonTest extends FunctionIndexCommonTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder(new File("target"));
 
+    @Override
     protected Tree createIndex(Tree index, String name, Set<String> propNames) {
         Tree def = index.addChild(INDEX_DEFINITIONS_NAME).addChild(name);
         def.setProperty(JcrConstants.JCR_PRIMARYTYPE,
@@ -57,7 +58,7 @@ public class LuceneFunctionIndexCommonTest extends FunctionIndexCommonTest {
         def.setProperty(FulltextIndexConstants.FULL_TEXT_ENABLED, false);
         def.setProperty(PropertyStates.createProperty(FulltextIndexConstants.INCLUDE_PROPERTY_NAMES, propNames, Type.STRINGS));
         def.setProperty(LuceneIndexConstants.SAVE_DIR_LISTING, true);
-        return index.getChild(INDEX_DEFINITIONS_NAME).getChild(name);
+        return def;
     }
 
 
