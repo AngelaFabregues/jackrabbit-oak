@@ -48,11 +48,6 @@ public class LuceneFunctionIndexCommonTest extends FunctionIndexCommonTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder(new File("target"));
 
-    protected Tree createIndex(String name, Set<String> propNames) {
-        Tree index = root.getTree("/");
-        return createIndex(index, name, propNames);
-    }
-
     protected Tree createIndex(Tree index, String name, Set<String> propNames) {
         Tree def = index.addChild(INDEX_DEFINITIONS_NAME).addChild(name);
         def.setProperty(JcrConstants.JCR_PRIMARYTYPE,

@@ -1191,12 +1191,12 @@ public abstract class FunctionIndexCommonTest extends AbstractQueryTest {
         return assertQuery(query, paths);
     }
 
-    protected Tree createIndex(String name, Set<String> propNames) {
+    private Tree createIndex(String name, Set<String> propNames) {
         Tree index = root.getTree("/");
         return createIndex(index, name, propNames);
     }
 
-    abstract protected Tree createIndex(Tree index, String name, Set<String> propNames);
+    protected abstract Tree createIndex(Tree index, String name, Set<String> propNames);
 
-    abstract protected String getLoggerName();
+    protected abstract String getLoggerName();
 }
