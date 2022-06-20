@@ -25,6 +25,7 @@ import org.apache.jackrabbit.oak.api.*;
 import org.apache.jackrabbit.oak.plugins.index.search.FulltextIndexConstants;
 import org.apache.jackrabbit.oak.plugins.index.search.IndexFormatVersion;
 import org.apache.jackrabbit.oak.plugins.memory.ArrayBasedBlob;
+import org.apache.jackrabbit.oak.plugins.tree.impl.AbstractTree;
 import org.apache.jackrabbit.oak.query.AbstractQueryTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,6 +89,8 @@ public abstract class RegexTest extends AbstractQueryTest {
         allProps.setProperty(FulltextIndexConstants.PROP_USE_IN_EXCERPT, true);*/
 
         root.commit();
+
+        System.out.println(((AbstractTree)root.getTree("/")).toJsonString(-1));
 
         Tree content = root.getTree("/");
         content.addChild("a").setProperty("a", "ara ve nadal");
