@@ -139,6 +139,7 @@ public class ElasticDocumentMaker extends FulltextDocumentMaker<ElasticDocument>
 
     @Override
     protected void indexTypedProperty(ElasticDocument doc, PropertyState property, String pname, PropertyDefinition pd, int i) {
+        String contentPropertyName = property.getName();
         // Get the Type tag from the defined index definition here - and not from the actual persisted property state - this way in case
         // If the actual property value is different from the property type defined in the index definition/mapping - this will try to convert the property if possible,
         // otherwise will log a warning and not try and add the property to index. If we try and index incompatible data types (like String to Date),
@@ -158,7 +159,7 @@ public class ElasticDocumentMaker extends FulltextDocumentMaker<ElasticDocument>
                 f = property.getValue(Type.STRING, i);
             }
 
-            doc.addProperty(pname, f);
+            doc.addProperty(contentPropertyName, f);
         } catch (Exception e) {
             LOG.warn(
                     "[{}] Ignoring property. Could not convert property {} of type {} to type {} for path {}",
